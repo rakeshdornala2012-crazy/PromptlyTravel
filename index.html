@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptlyTravel - AI Unified Travel</title>
+    <meta name="description" content="A trend-setter AI travel platform summing up flights, hotels, forex, and sightseeing into a single page seamlessly.">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Himalayas Animated Background -->
+    <div class="himalayas-bg">
+        <div class="bg-image"></div>
+        <div class="overlay"></div>
+    </div>
+
+    <main class="app-container">
+        <!-- Header / Voice Search Area -->
+        <header class="hero-header" id="hero-header">
+            <div class="logo">
+                <i class="fa-solid fa-umbrella-beach text-gradient"></i>
+                <span>Promptly<span class="text-gradient">Travel</span></span>
+            </div>
+            
+            <div class="search-container">
+                <h1 class="hero-title">Where to next?</h1>
+                <p class="hero-subtitle">Use voice or text to build your perfect trip in one click.</p>
+                
+                <div class="search-bar-wrapper">
+                    <button id="voice-btn" class="voice-btn" aria-label="Use voice search">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <input type="text" id="search-input" class="search-input" placeholder="e.g. 'Book a week in Paris with flights and a 5-star hotel near the Eiffel'">
+                    <button id="search-submit" class="search-submit btn-primary">
+                        <i class="fa-solid fa-sparkles"></i> Generate
+                    </button>
+                </div>
+                <div id="listening-indicator" class="hidden">Listening...</div>
+            </div>
+        </header>
+
+        <!-- Loader -->
+        <div id="loader" class="loader-container hidden">
+            <div class="ai-spinner"></div>
+            <p>Curating your perfect itinerary...</p>
+        </div>
+
+        <!-- Dashboard Dashboard (Hidden until populated) -->
+        <section id="results-dashboard" class="results-dashboard hidden">
+            <div class="itinerary-header">
+                <h2>Your AI Curated Trip to <span id="dest-title" class="text-gradient">Paris</span></h2>
+                <div class="trip-meta text-muted">
+                    <span class="interactive-meta">
+                        <i class="fa-regular fa-calendar"></i> 
+                        <input type="date" id="trip-start" class="meta-input" value="2026-10-10"> 
+                        <span style="opacity: 0.5; margin: 0 4px;">to</span>
+                        <input type="date" id="trip-end" class="meta-input" value="2026-10-17">
+                    </span>
+                    <span class="interactive-meta">
+                        <i class="fa-solid fa-wallet"></i> Forex: 
+                        <span style="opacity: 0.7;">1</span> 
+                        <select id="base-currency" class="meta-select">
+                            <option value="USD" selected>USD</option>
+                            <option value="GBP">GBP</option>
+                            <option value="CAD">CAD</option>
+                            <option value="AUD">AUD</option>
+                        </select>
+                        <span style="margin: 0 4px;">=</span>
+                        <span id="forex-rate-display">0.94</span> 
+                        <select id="target-currency" class="meta-select">
+                            <option value="EUR" selected>EUR</option>
+                            <option value="JPY">JPY</option>
+                            <option value="INR">INR</option>
+                            <option value="AED">AED</option>
+                            <option value="CHF">CHF</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" data-filter="all">All</button>
+                <button class="tab-btn" data-filter="element-flight"><i class="fa-solid fa-plane"></i> Flights</button>
+                <button class="tab-btn" data-filter="element-hotel"><i class="fa-solid fa-hotel"></i> Hotels</button>
+                <button class="tab-btn" data-filter="element-dining"><i class="fa-solid fa-utensils"></i> Best Food Options</button>
+                <button class="tab-btn" data-filter="element-activity"><i class="fa-solid fa-ticket"></i> Sightseeing</button>
+                <button class="tab-btn" data-filter="element-weather"><i class="fa-solid fa-sun-cloud"></i> Weather & Forex</button>
+                <button class="tab-btn" data-filter="element-visa"><i class="fa-solid fa-passport"></i> Visas & Docs</button>
+            </div>
+
+            <!-- Masonry / Flex Layout for the Single Page Dashboard -->
+            <div class="dashboard-grid">
+                
+                <!-- Document Hub & Visa Card -->
+                <div class="glass-card element-visa" style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-passport"></i> Passports & Visas</h3>
+                        <span class="badge badge-primary">Travel Ready</span>
+                    </div>
+                    <div class="card-body doc-hub-grid">
+                        <!-- Instant Scan Side -->
+                        <div class="instant-scan-area">
+                            <h4><i class="fa-solid fa-expand"></i> Instant Scan</h4>
+                            <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">Eliminate typing. Auto-populate travel data.</p>
+                            <div class="scanner-frame">
+                                <i class="fa-regular fa-id-card passport-icon"></i>
+                                <div class="scanner-laser"></div>
+                            </div>
+                            <button id="scan-passport-btn" class="btn-outline w-100" style="margin-top: 1rem;"><i class="fa-solid fa-camera"></i> Scan Document</button>
+                        </div>
+                        
+                        <!-- Vault Side -->
+                        <div class="vault-area">
+                            <h4><i class="fa-solid fa-vault"></i> Document Hub</h4>
+                            <ul class="document-list">
+                                <li class="doc-item">
+                                    <div class="doc-icon"><i class="fa-solid fa-lock text-gradient"></i></div>
+                                    <div class="doc-info">
+                                        <strong>Primary Passport</strong>
+                                        <span class="text-muted">Exp: Oct 2030</span>
+                                    </div>
+                                    <span class="badge badge-primary" style="margin-left: auto;">Secured</span>
+                                </li>
+                                <li class="doc-item">
+                                    <div class="doc-icon"><i class="fa-solid fa-stamp text-gradient"></i></div>
+                                    <div class="doc-info">
+                                        <strong>France Schengen Visa</strong>
+                                        <span class="text-muted">Status: Pending</span>
+                                    </div>
+                                    <span class="badge" style="border-color: #E5484D; color: #E5484D; margin-left: auto;">Processing</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flight Card 1 -->
+                <div class="glass-card element-flight option-card selected" data-type="flight" data-price="540">
+                    <div class="card-image flight-img"></div>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-plane"></i> Flight <span class="badge badge-primary selected-badge">Selected</span></h3>
+                        <span class="price">$540</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="flight-route">
+                            <div class="airport">
+                                <strong>JFK</strong>
+                                <span>10:00 AM</span>
+                            </div>
+                            <div class="flight-path">
+                                <span class="duration">7h 20m</span>
+                                <div class="line"></div>
+                                <span class="stops">Direct</span>
+                            </div>
+                            <div class="airport">
+                                <strong>CDG</strong>
+                                <span>11:20 PM</span>
+                            </div>
+                        </div>
+                        <p class="airline">Air France • Economy</p>
+                        <button class="btn-outline select-option-btn mt-4 hidden">Select This Flight</button>
+                    </div>
+                </div>
+
+                <!-- Flight Card 2 -->
+                <div class="glass-card element-flight option-card" data-type="flight" data-price="380">
+                    <div class="card-image flight-img"></div>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-plane"></i> Flight <span class="badge badge-primary selected-badge hidden">Selected</span></h3>
+                        <span class="price">$380</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="flight-route">
+                            <div class="airport">
+                                <strong>EWR</strong>
+                                <span>1:00 PM</span>
+                            </div>
+                            <div class="flight-path">
+                                <span class="duration">10h 15m</span>
+                                <div class="line"></div>
+                                <span class="stops">1 Stop</span>
+                            </div>
+                            <div class="airport">
+                                <strong>CDG</strong>
+                                <span>5:15 AM</span>
+                            </div>
+                        </div>
+                        <p class="airline">Delta • Basic Economy</p>
+                        <button class="btn-outline select-option-btn mt-4">Select This Flight</button>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 1 -->
+                <div class="glass-card element-hotel option-card selected" data-type="hotel" data-price="1200">
+                    <div class="card-image hotel-img"></div>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-hotel"></i> Hotel <span class="badge badge-primary selected-badge">Selected</span></h3>
+                        <span class="price">$1,200</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Le Meurice Paris</h4>
+                        <p class="rating">★★★★★ 4.9/5</p>
+                        <p class="text-muted">7 Nights • Deluxe Suite • 2km from Eiffel Tower</p>
+                        <button class="btn-outline select-option-btn mt-4 hidden">Select This Hotel</button>
+                    </div>
+                </div>
+
+                <!-- Hotel Card 2 -->
+                <div class="glass-card element-hotel option-card" data-type="hotel" data-price="850">
+                    <div class="card-image budget-hotel-img"></div>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-hotel"></i> Hotel <span class="badge badge-primary selected-badge hidden">Selected</span></h3>
+                        <span class="price">$850</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Novotel Paris Centre</h4>
+                        <p class="rating">★★★★☆ 4.2/5</p>
+                        <p class="text-muted">7 Nights • Standard Room • 4km from Eiffel Tower</p>
+                        <button class="btn-outline select-option-btn mt-4">Select This Hotel</button>
+                    </div>
+                </div>
+
+                <!-- Sightseeing / Activity 1 -->
+                <div class="glass-card element-activity option-card selected" data-type="activity" data-price="120">
+                     <div class="card-image activity-img"></div>
+                     <div class="card-header">
+                        <h3><i class="fa-solid fa-ticket"></i> Sightseeing <span class="badge badge-primary selected-badge">Selected</span></h3>
+                        <span class="price">$120</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Eiffel Tower Summit Access</h4>
+                        <p class="text-muted">Skip the line and enjoy breathtaking views.</p>
+                        <ul class="perks">
+                            <li>Priority Entry</li>
+                            <li>Champagne Included</li>
+                        </ul>
+                        <button class="btn-outline select-option-btn mt-4 hidden">Select Activity</button>
+                    </div>
+                </div>
+
+                <!-- Sightseeing / Activity 2 -->
+                <div class="glass-card element-activity option-card" data-type="activity" data-price="85">
+                     <div class="card-image kids-activity-img"></div>
+                     <div class="card-header">
+                        <h3><i class="fa-solid fa-ticket"></i> Sightseeing <span class="badge badge-primary selected-badge hidden">Selected</span></h3>
+                        <span class="price">$85</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Louvre Museum Tour</h4>
+                        <p class="text-muted">Guided tour highlighting the Mona Lisa.</p>
+                        <ul class="perks">
+                            <li>Audio Guide</li>
+                            <li>Skip-the-line</li>
+                        </ul>
+                        <button class="btn-outline select-option-btn mt-4">Select Activity</button>
+                    </div>
+                </div>
+
+                <!-- Forex & Local Insights -->
+                <div class="glass-card element-forex text-center">
+                    <div class="card-header justify-center">
+                        <h3><i class="fa-solid fa-money-bill-1-wave"></i> Forex Exchange</h3>
+                    </div>
+                    <div class="card-body forex-content">
+                        <div class="currency-pair">
+                            <div class="currency">
+                                <span id="card-base-curr">USD</span>
+                                <strong>1,000</strong>
+                            </div>
+                            <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                            <div class="currency">
+                                <span id="card-target-curr">EUR</span>
+                                <strong id="card-target-amt">940.50</strong>
+                            </div>
+                        </div>
+                        <button class="btn-outline">Lock Rate & Convert</button>
+                    </div>
+                </div>
+
+                <!-- Culinary & Dining Card -->
+                <div class="glass-card element-dining">
+                    <div class="card-image dining-img"></div>
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-utensils"></i> Dining</h3>
+                        <span class="price"><i class="fa-solid fa-star text-gradient"></i> 4.8</span>
+                    </div>
+                    <div class="card-body">
+                        <h4>Le Jules Verne</h4>
+                        <p class="rating text-muted">Eiffel Tower • Michelin Star • French</p>
+                        <div class="season-badge mt-2" style="background: rgba(229, 72, 77, 0.15); border-color: var(--accent);">
+                            <i class="fa-solid fa-fire text-gradient"></i> Regional Must-Try: <strong>Coq au Vin & Macarons</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather & Seasonal Insights Card -->
+                <div class="glass-card element-weather text-center">
+                    <div class="card-header weather-header justify-center text-center">
+                        <div class="weather-temp">
+                            <i class="fa-solid fa-sun spinning-sun"></i>
+                            <span>24°C</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center">
+                        <h4>Sunny & Clear</h4>
+                        <p class="text-muted">October in Paris</p>
+                        <div class="season-badge mt-4">
+                            <i class="fa-solid fa-people-group"></i> 
+                            <span>Peak Season: <strong>Low</strong></span>
+                            <p class="text-muted" style="font-size: 0.8rem; margin-top: 5px;">Perfect time! Excellent weather and fewer tourist crowds.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Single Click Checkout -->
+            <div class="checkout-footer hidden" id="checkout-footer">
+                <div class="checkout-content glass-card">
+                    <div class="total-summary">
+                        <span>Total Trip Cost</span>
+                        <strong class="total-price">$1,860</strong>
+                    </div>
+                    <button id="book-total-btn" class="btn-primary checkout-btn">
+                        1-Click Book Total <i class="fa-solid fa-bolt"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="booking-modal" class="modal hidden">
+        <div class="modal-content glass-card text-center">
+            <i class="fa-regular fa-circle-check success-icon"></i>
+            <h2>Booking Confirmed!</h2>
+            <p>Your flights, hotel, and activities have been secured. Have a great trip!</p>
+            <button class="btn-primary mt-4" id="close-modal-btn">View Itinerary</button>
+        </div>
+    </div>
+    <!-- AI Help Desk Widget -->
+    <div id="helpdesk-fab" class="helpdesk-fab">
+        <i class="fa-solid fa-headset"></i>
+    </div>
+    
+    <div id="helpdesk-widget" class="glass-card helpdesk-widget hidden">
+        <div class="card-header helpdesk-header">
+            <h3><i class="fa-solid fa-robot"></i> PromptlyTravel Support</h3>
+            <button id="close-helpdesk" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="card-body chat-body" id="chat-body">
+            <div class="chat-message bot">
+                <p>Hi there! Need help customizing your trip or booking activities?</p>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="helpdesk-input" placeholder="Ask PromptlyTravel anything...">
+            <button id="helpdesk-send" class="btn-icon"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
